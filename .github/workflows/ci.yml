@@ -9,17 +9,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Clonar
-        uses: actions/checkout@v2
+      - name: Clonar el repositorio
+        uses: actions/checkout@v3
 
-      - name: Configurar Python
-        uses: actions/setup-python@v4
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
         with:
-          python-version: '3.10'
+          node-version: 18
 
-      - name: Mostrar versión de Python
-        run: python --version
+      - name: Instalar dependencias
+        run: npm install
 
-      - name: Mostrar Estructura
-        run: ls -R
+      - name: Lint (verifica estilo de código)
+        run: npm run lint
