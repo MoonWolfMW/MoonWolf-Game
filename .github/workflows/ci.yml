@@ -9,7 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    stepst:
-      -use: actions/checkout@v2
-      -name: Fin
-      run: echo "Solo revision basica...Soon"
+    steps:
+      -name: Clonar
+      uses: actions/checkout@v2
+
+    name: Mostrar Estructura
+    run: ls - R
