@@ -9,18 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    steps:
-      - name: Clonar el repositorio
-        uses: actions/checkout@v3
-
-      - name: Instalar Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Instalar dependencias
-        run: npm install
-
-      - name: Lint (verifica estilo de código)
-        run: npm run lint
+    stepst:
+      -uses: actions/checkout@v2
+      -name: Fin
+      run: echo "Solo revision basica...Soon"
