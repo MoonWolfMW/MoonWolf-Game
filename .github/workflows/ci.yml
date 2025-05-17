@@ -10,8 +10,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      -name: Clonar
-      uses: actions/checkout@v2
+      - name: Clonar
+        uses: actions/checkout@v2
 
-    -name: Mostrar Estructura
-    run: ls - R
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Mostrar versión de Python
+        run: python --version
+
+      - name: Mostrar Estructura
+        run: ls -R
