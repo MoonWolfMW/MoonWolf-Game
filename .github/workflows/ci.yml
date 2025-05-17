@@ -13,5 +13,5 @@ jobs:
       -name: Clonar
       uses: actions/checkout@v2
 
-    name: Mostrar Estructura
+    -name: Mostrar Estructura
     run: ls - R
