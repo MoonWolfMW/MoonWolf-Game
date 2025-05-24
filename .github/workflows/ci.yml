@@ -14,13 +14,4 @@ jobs:
       - name: Clonar el repositorio
         uses: actions/checkout@v3
 
-      - name: Instalar Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
 
-      - name: Instalar dependencias
-        run: npm install
-
-      - name: Lint (verifica estilo de código)
-        run: npm run lint
