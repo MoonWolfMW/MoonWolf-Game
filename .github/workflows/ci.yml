@@ -1,9 +1,14 @@
 name: CI Workflow
+
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]        
+    branches: [main]
+
+permissions:
+  contents: write  # 💡 necesario para hacer push
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -14,4 +19,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./app
-  
