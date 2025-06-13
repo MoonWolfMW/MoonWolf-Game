@@ -15,21 +15,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./app
   
-  
-name: Validate HTML and CSS
-
-on: [push, pull_request]
-
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Validate HTML
-        uses: Cyb3r-Jak3/html5validator-action@v7
-        with:
-          root: app
-      - name: Validate CSS
-        uses: estherjk/gh-action-stylelint@v1
-        with:
-          files: app/**/*.css
