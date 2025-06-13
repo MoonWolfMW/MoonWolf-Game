@@ -10,17 +10,6 @@ permissions:
   contents: write  # Required to push changes
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./app
-
-  # Revisar errores de HTML/CSS/JS automáticamente
   lint:
     runs-on: ubuntu-latest
 
@@ -43,8 +32,19 @@ jobs:
       - name: Lint JavaScript con ESLint
         run: npx eslint ./app/**/*.js
 
-      - name: Lint CSS con Stylelint
-        run: npx stylelint "./app/**/*.css"
+      - name: Lint CSS con Stylelint (auto-fix)
+        run: npx stylelint "./app/**/*.css" --fix
 
       - name: Lint HTML con HTMLHint
         run: npx htmlhint "./app/**/*.html"
+
+  deploy:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./app
