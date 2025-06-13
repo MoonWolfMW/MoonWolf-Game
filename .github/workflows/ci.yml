@@ -1,17 +1,35 @@
-name: CI
-
+name: CI Workflow
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]        
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./app
+  
+  
+name: Validate HTML and CSS
+
+on: [push, pull_request]
 
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Clonar el repositorio
-        uses: actions/checkout@v3
-
-
+      - uses: actions/checkout@v3
+      - name: Validate HTML
+        uses: Cyb3r-Jak3/html5validator-action@v7
+        with:
+          root: app
+      - name: Validate CSS
+        uses: estherjk/gh-action-stylelint@v1
+        with:
+          files: app/**/*.css

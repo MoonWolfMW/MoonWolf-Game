@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Pet - Vista Principal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="" href="crearMascota.html">
+</head>
+<body>
+
+  <div class="main-container">
+    <h1 class="title">My Pet</h1>
+
+    <div class="btn-group">
+      <button id="btn-create">Crear Mascota</button>
+      <button id="btn-select">Seleccionar Mascota</button>
+      <button id="btn-exit">Cerrar Juego</button>
+    </div>
+  </div>
+
+  <script>
+    // Botones con sus acciones
+    document.getElementById('btn-create').addEventListener('click', () => {
+      window.location.href = 'crearMascota.html';
+    });
+
+    document.getElementById('btn-select').addEventListener('click', () => {
+      alert('Aquí se mostrarán las mascotas guardadas para seleccionar. (Por ahora está en construcción)');
+    });
+
+    document.getElementById('btn-exit').addEventListener('click', () => {
+      if (confirm('¿Quieres cerrar el juego?')) {
+        window.close();  // En navegadores normales esto no funciona, es solo demostrativo
+      }
+    });
+  </script>
+
+</body>
+</html>
