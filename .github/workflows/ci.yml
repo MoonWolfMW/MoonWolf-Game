@@ -21,7 +21,7 @@ jobs:
           publish_dir: ./app
 
   # Revisar errores de HTML/CSS/JS automáticamente
-  lint: 
+  lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,8 +36,8 @@ jobs:
       - name: Instalar linters
         run: |
           npm init -y
-          npm install eslint stylelint htmlhint --save-dev
-          echo '{}' > .stylelintrc.json
+          npm install eslint stylelint stylelint-config-standard htmlhint --save-dev
+          echo '{ "extends": "stylelint-config-standard" }' > .stylelintrc.json
           echo '{}' > .htmlhintrc
 
       - name: Lint JavaScript con ESLint
