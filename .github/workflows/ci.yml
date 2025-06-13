@@ -19,3 +19,35 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./app
+
+#Revisar errores de HTML/CSS/JS automáticamente
+
+jobs: 
+  lint: 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Instalar linters
+        run: |
+          npm init -y
+          npm install eslint stylelint htmlhint --save-dev
+          npx eslint --init || true
+          echo '{}' > .stylelintrc.json
+          echo '{}' > .htmlhintrc
+
+      - name: Lint JavaScript con ESLint
+        run: npx eslint ./app/**/*.js || exit 0
+
+      - name: Lint CSS con Stylelint
+        run: npx stylelint "./app/**/*.css" || exit 0
+
+      - name: Lint HTML con HTMLHint
+        run: npx htmlhint "./app/**/*.html" || exit 0
