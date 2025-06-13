@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write  # 💡 necesario para hacer push
+  contents: write  # Required to push changes
 
 jobs:
   deploy:
@@ -20,9 +20,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./app
 
-#Revisar errores de HTML/CSS/JS automáticamente
-
-jobs: 
+  # Revisar errores de HTML/CSS/JS automáticamente
   lint: 
     runs-on: ubuntu-latest
 
@@ -44,10 +42,10 @@ jobs:
           echo '{}' > .htmlhintrc
 
       - name: Lint JavaScript con ESLint
-        run: npx eslint ./app/**/*.js || exit 0
+        run: npx eslint ./app/**/*.js
 
       - name: Lint CSS con Stylelint
-        run: npx stylelint "./app/**/*.css" || exit 0
+        run: npx stylelint "./app/**/*.css"
 
       - name: Lint HTML con HTMLHint
-        run: npx htmlhint "./app/**/*.html" || exit 0
+        run: npx htmlhint "./app/**/*.html"
