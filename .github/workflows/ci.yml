@@ -37,7 +37,6 @@ jobs:
         run: |
           npm init -y
           npm install eslint stylelint htmlhint --save-dev
-          npx eslint --init || true
           echo '{}' > .stylelintrc.json
           echo '{}' > .htmlhintrc
 
