@@ -1,5 +1,4 @@
-name: CI 
-
+name: CI
 
 on:
   push:
@@ -8,7 +7,7 @@ on:
     branches: [main, kathy]
 
 permissions:
-  contents: write  # Required to push changes
+  contents: write
 
 jobs:
   lint:
@@ -39,13 +38,19 @@ jobs:
       - name: Lint HTML con HTMLHint
         run: npx htmlhint "./app/**/*.html"
 
-    deploy:
-      needs: lint
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - name: Deploy to GitHub Pages
-          uses: peaceiris/actions-gh-pages@v3
-          with:
-            github_token: ${{ secrets.GH_PAT }}
-            publish_dir: ./app
+  deploy:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configurar usuario git para GitHub Actions
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./app
