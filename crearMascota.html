@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crear Mascota - My Pet</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="crear-container">
+    <h1 class="title">Crear Mascota</h1>
+
+    <p>Selecciona cómo nacerá tu mascota:</p>
+
+    <div class="opciones-crear">
+      <label class="opcion">
+        <input type="radio" name="tipoMascota" value="huevo" checked />
+        <img src="assets/huevo.png" alt="Huevo" />
+        <span>Huevo</span>
+      </label>
+
+      <label class="opcion">
+        <input type="radio" name="tipoMascota" value="canasta" />
+        <img src="assets/canasta.png" alt="Canasta" />
+        <span>Canasta</span>
+      </label>
+    </div>
+
+    <button id="btn-iniciar">Iniciar Juego</button>
+  </div>
+
+  <script>
+    document.getElementById('btn-iniciar').addEventListener('click', () => {
+      const seleccion = document.querySelector('input[name="tipoMascota"]:checked').value;
+      localStorage.setItem('tipoMascota', seleccion);
+      window.location.href = 'juego.html'; // redirige a la vista del juego
+    });
+  </script>
+
+</body>
+</html>
