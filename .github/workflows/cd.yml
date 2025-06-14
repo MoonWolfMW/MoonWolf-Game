@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main, kathy
-  pull_request:
-    branches:
-      - main, kathy
 
     permissions:
     contents: write
