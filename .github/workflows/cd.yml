@@ -3,11 +3,19 @@ name: CD
 on:
   push:
     branches:
-      - main
+      - main, kathy
+  pull_request:
+    branches:
+      - main, kathy
+
+    permissions:
+    contents: write
 
 #publica los cambios directamente en Github Pages
 
 jobs:
+
+
   deploy:
     runs-on: ubuntu-latest
 
