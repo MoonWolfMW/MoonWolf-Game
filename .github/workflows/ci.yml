@@ -2,9 +2,9 @@ name: CI Workflow
 
 on:
   push:
-    branches: [main]
+    branches: [main, kathy]
   pull_request:
-    branches: [main]
+    branches: [main, kathy]
 
 permissions:
   contents: write  # Required to push changes
@@ -48,3 +48,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./app
+
+  
