@@ -2,59 +2,49 @@ name: CI Workflow
 
 on:
   push:
-    branches: [main]       # Ejecuta el workflow al hacer push a la rama main
+    branches: [main]
   pull_request:
-    branches: [main]       # También al abrir un pull request hacia main
+    branches: [main]
 
 permissions:
-  contents: write          # Permite al job hacer push (necesario para el deploy)
+  contents: write  # Required to push changes
 
 jobs:
-  lint-and-test:
-    runs-on: ubuntu-latest # Usa un runner de Ubuntu en la nube
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4 # Clona el código del repositorio
-
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18       # Usa la versión 18 de Node.js
-          cache: 'npm'           # Habilita caché de dependencias npm para acelerar el flujo
-
-      - name: Instalar dependencias
-        run: |
-          # Si hay un package.json, instala dependencias con seguridad (npm ci)
-          # Si no hay, inicializa el proyecto e instala herramientas de linting
-          if [ -f package.json ]; then
-            npm ci
-          else
-            npm init -y
-            npm install eslint stylelint stylelint-config-standard htmlhint --save-dev
-            echo '{ "extends": "stylelint-config-standard" }' > .stylelintrc.json
-            echo '{}' > .htmlhintrc
-          fi
-
-      - name: Lint JavaScript con ESLint
-        run: npx eslint "./app/**/*.js" # Revisa el código JS para detectar errores de estilo o bugs
-
-      - name: Lint CSS con Stylelint (auto-fix)
-        run: npx stylelint "./app/**/*.css" --fix # Revisa y corrige estilos CSS automáticamente
-
-      - name: Lint HTML con HTMLHint
-        run: npx htmlhint "./app/**/*.html" # Verifica errores de sintaxis y buenas prácticas en HTML
-
-  deploy:
-    needs: lint-and-test
+  lint:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout código
-        uses: actions/checkout@v4 # Vuelve a clonar el código
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
 
-      - name: Deploy en GitHub Pages
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Instalar linters
+        run: |
+          npm init -y
+          npm install eslint stylelint stylelint-config-standard htmlhint --save-dev
+          echo '{ "extends": "stylelint-config-standard" }' > .stylelintrc.json
+          echo '{}' > .htmlhintrc
+
+      - name: Lint JavaScript con ESLint
+        run: npx eslint ./app/**/*.js
+
+      - name: Lint CSS con Stylelint (auto-fix)
+        run: npx stylelint "./app/**/*.css" --fix
+
+      - name: Lint HTML con HTMLHint
+        run: npx htmlhint "./app/**/*.html"
+
+  deploy:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # Token automático de GitHub para hacer el push
-          publish_dir: ./app # Directorio que será publicado en GitHub Pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./app
