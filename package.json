@@ -1,14 +1,30 @@
 {
   "name": "moonwolf-game",
   "version": "1.0.0",
-  "description": "",
+  "description": "Juego MoonWolf",
   "main": "index.js",
- "scripts": {
-    "build": "echo \"No build step defined yet\""
+  "scripts": {
+    "build": "echo \"No build step defined yet\"",
+    "prepare": "chmod +x .githooks/* && git config core.hooksPath .githooks || true",
+    "install-hooks": "npm install -g eslint stylelint stylelint-config-standard htmlhint gitleaks",
+    "lint:js": "eslint ./app/**/*.js",
+    "lint:css": "stylelint ./app/**/*.css",
+    "lint:html": "htmlhint ./app/**/*.html",
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:html",
+    "security-check": "gitleaks detect --source . -v"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "game",
+    "javascript",
+    "html5"
+  ],
+  "author": "Tu Nombre o Equipo",
   "license": "ISC",
   "devDependencies": {
+    "eslint": "^8.56.0",
+    "stylelint": "^16.2.1",
+    "stylelint-config-standard": "^36.0.0",
+    "htmlhint": "^1.1.4",
+    "gitleaks": "^8.18.1"
   }
 }

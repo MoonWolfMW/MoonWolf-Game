@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# Ejecutar linters antes de permitir commit
+echo "🔍 Ejecutando linters..."
+
+# Lint JavaScript
+if [ -f .eslintrc.json ] && [ -n "$(find ./app -name '*.js')" ]; then
+  eslint ./app/**/*.js --quiet
+  if [ $? -ne 0 ]; then
+    echo "❌ Error en ESLint - Commit bloqueado"
+    exit 1
+  fi
+fi
+
+# Lint CSS
+if [ -f .stylelintrc.json ] && [ -n "$(find ./app -name '*.css')" ]; then
+  stylelint "./app/**/*.css" --quiet
+  if [ $? -ne 0 ]; then
+    echo "❌ Error en Stylelint - Commit bloqueado"
+    exit 1
+  fi
+fi
+
+# Lint HTML
+if [ -f .htmlhintrc ] && [ -n "$(find ./app -name '*.html')" ]; then
+  htmlhint "./app/**/*.html" --quiet
+  if [ $? -ne 0 ]; then
+    echo "❌ Error en HTMLHint - Commit bloqueado"
+    exit 1
+  fi
+fi
+
+echo "✅ Linters aprobados - Commit permitido"
+exit 0

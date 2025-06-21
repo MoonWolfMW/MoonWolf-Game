@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "🔒 Ejecutando verificaciones de seguridad..."
+
+# Detectar secretos
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks detect --source . -v
+  if [ $? -ne 0 ]; then
+    echo "❌ Gitleaks encontró secretos - Push bloqueado"
+    exit 1
+  fi
+fi
+
+echo "✅ Verificaciones de seguridad aprobadas - Push permitido"
+exit 0
