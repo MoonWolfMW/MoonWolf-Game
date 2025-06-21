@@ -1,5 +1,0 @@
-title = "Configuración de Gitleaks"
-[[rules]]
-description = "Detector de credenciales"
-id = "generic-credential-detector"
-regex = '''(?i)(secret|key|password|token|api)[=:].{8,}'''
