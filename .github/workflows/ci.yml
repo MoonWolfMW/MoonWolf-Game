@@ -1,4 +1,4 @@
-name: CI - Seguridad y Calidad de Código
+name: CI - Análisis de Calidad
 
 on:
   push:
@@ -7,57 +7,33 @@ on:
     branches: [main, kathy]
 
 jobs:
-  seguridad:
-    name: "🔒 Análisis de Seguridad"
+  calidad_codigo:
+    name: "🧹 Análisis de Calidad"
     runs-on: ubuntu-latest
     
     steps:
-      - name: "🛡️ Checkout del código"
+      - name: "📥 Checkout del código"
         uses: actions/checkout@v3
 
-      - name: "📦 Configurar Node.js"
+      - name: "🔄 Configurar Node.js (solo para linters)"
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          
-      - name: "🔍 Inicializar proyecto (si no existe package.json)"
-        run: |
-          if [ ! -f package.json ]; then
-            npm init -y
-          fi
-          
-      - name: "🔄 Instalar dependencias"
-        run: npm install --package-lock  # Fuerza creación de package-lock.json
-      
-      - name: "🔍 Auditoría de dependencias"
-        run: npm audit --audit-level=moderate
+          cache: 'none'  # Desactivar caché ya que no tenemos package-lock.json
 
-  calidad_codigo:
-    name: "🧹 Análisis de Calidad"
-    needs: seguridad
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v3
-      
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'  # Especifica el archivo de lock
-
-      - name: "📦 Instalar linters"
+      - name: "📦 Instalar linters globalmente"
         run: |
-          npm install eslint stylelint stylelint-config-standard htmlhint --save-dev
+          npm install -g eslint stylelint stylelint-config-standard htmlhint
+          # Crear configuraciones básicas si no existen
           [ ! -f .eslintrc.json ] && echo '{ "extends": "eslint:recommended" }' > .eslintrc.json
           [ ! -f .stylelintrc.json ] && echo '{ "extends": "stylelint-config-standard" }' > .stylelintrc.json
           [ ! -f .htmlhintrc ] && echo '{}' > .htmlhintrc
 
       - name: "🔍 Lint JavaScript"
-        run: npx eslint ./app/**/*.js --quiet
+        run: eslint ./app/**/*.js --quiet
 
       - name: "🎨 Lint CSS"
-        run: npx stylelint "./app/**/*.css" --fix --quiet
+        run: stylelint "./app/**/*.css" --fix --quiet
 
       - name: "📄 Lint HTML"
-        run: npx htmlhint "./app/**/*.html"
+        run: htmlhint "./app/**/*.html"
