@@ -1,0 +1,5 @@
+title = "gitleaks config"
+[[rules]]
+description = "Detector de secretos genérico"
+id = "generic-secret-detector"
+regex = '''(?i)(secret|key|password|token|api)[=:].{8,}'''
