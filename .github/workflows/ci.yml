@@ -1,4 +1,4 @@
-name: CI - Análisis de Calidad
+name: CI
 
 on:
   push:
@@ -6,34 +6,51 @@ on:
   pull_request:
     branches: [main, kathy]
 
+permissions:
+  contents: write
+
 jobs:
-  calidad_codigo:
-    name: "🧹 Análisis de Calidad"
+  lint:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: "📥 Checkout del código"
+      - name: Clonar repositorio
         uses: actions/checkout@v3
 
-      - name: "🔄 Configurar Node.js (solo para linters)"
+      - name: Instalar Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'none'  # Desactivar caché ya que no tenemos package-lock.json
 
-      - name: "📦 Instalar linters globalmente"
+      - name: Instalar linters
         run: |
-          npm install -g eslint stylelint stylelint-config-standard htmlhint
-          # Crear configuraciones básicas si no existen
-          [ ! -f .eslintrc.json ] && echo '{ "extends": "eslint:recommended" }' > .eslintrc.json
-          [ ! -f .stylelintrc.json ] && echo '{ "extends": "stylelint-config-standard" }' > .stylelintrc.json
-          [ ! -f .htmlhintrc ] && echo '{}' > .htmlhintrc
+          npm init -y
+          npm install eslint stylelint stylelint-config-standard htmlhint --save-dev
+          echo '{ "extends": "stylelint-config-standard" }' > .stylelintrc.json
+          echo '{}' > .htmlhintrc
 
-      - name: "🔍 Lint JavaScript"
-        run: eslint ./app/**/*.js --quiet
+      - name: Lint JavaScript con ESLint
+        run: npx eslint ./app/**/*.js
 
-      - name: "🎨 Lint CSS"
-        run: stylelint "./app/**/*.css" --fix --quiet
+      - name: Lint CSS con Stylelint (auto-fix)
+        run: npx stylelint "./app/**/*.css" --fix
 
-      - name: "📄 Lint HTML"
-        run: htmlhint "./app/**/*.html"
+      - name: Lint HTML con HTMLHint
+        run: npx htmlhint "./app/**/*.html"
+
+  deploy:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configurar usuario git para GitHub Actions
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./app
