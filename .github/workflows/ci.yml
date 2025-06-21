@@ -42,11 +42,11 @@ jobs:
       - name: "📥 Checkout del repositorio"
         uses: actions/checkout@v3
 
-      - name: "🔄 Configurar Node.js (solo para linters)"
+      - name: "🔄 Configurar Node.js (sin caché)"
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'none'
+          # Eliminada la línea de cache: 'none' que causaba el error
 
       - name: "📦 Instalar linters globalmente"
         run: |
