@@ -1,38 +1,36 @@
-name: CD
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
-      - kathy
+    branches: [main, kathy]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Required for gh-pages deployment
-      pages: write     # Required if using GitHub Pages
-      id-token: write  # Required if using GitHub Pages
+      contents: write
+      pages: write
+      id-token: write
 
     steps:
-      - name: Checkout repo
+      - name: "🚚 Checkout code"
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          cache: 'npm'  # Adds caching for faster installs
+      # Configuración mínima de Git (necesaria para el deploy)
+      - name: "⚙️ Configurar Git"
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
 
-      - name: Install dependencies
-        run: npm ci  # More reliable than npm install for CI
-
-      - name: Build project
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
+      # Paso de despliegue sin dependencias de Node.js
+      - name: "🚀 Desplegar en GitHub Pages"
         uses: peaceiris/actions-gh-pages@v3
         with:
+          # Usa el token automático de GitHub
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./publish_dir  # Make sure this matches your actual build output directory
-          keep_files: true  # Optional: keeps existing files in gh-pages branch
+          # Especifica tu directorio de publicación
+          publish_dir: ./app
+          # Fuerza el despliegue incluso si no hay cambios
+          force_orphan: true
+          # No requiere configuración de Node.js
+          enable_jekyll: false
