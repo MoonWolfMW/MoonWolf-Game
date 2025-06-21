@@ -9,6 +9,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for gh-pages deployment
+      pages: write     # Required if using GitHub Pages
+      id-token: write  # Required if using GitHub Pages
 
     steps:
       - name: Checkout repo
@@ -18,9 +22,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
+          cache: 'npm'  # Adds caching for faster installs
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci  # More reliable than npm install for CI
 
       - name: Build project
         run: npm run build
@@ -29,4 +34,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./publish_dir
+          publish_dir: ./publish_dir  # Make sure this matches your actual build output directory
+          keep_files: true  # Optional: keeps existing files in gh-pages branch
