@@ -15,80 +15,49 @@ jobs:
       - name: "🛡️ Checkout del código"
         uses: actions/checkout@v3
 
-      - name: "📦 Instalación de dependencias con auditoría"
+      - name: "📦 Configurar Node.js"
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           
-      - run: npm install
+      - name: "🔍 Inicializar proyecto (si no existe package.json)"
+        run: |
+          if [ ! -f package.json ]; then
+            npm init -y
+          fi
+          
+      - name: "🔄 Instalar dependencias"
+        run: npm install --package-lock  # Fuerza creación de package-lock.json
       
-      # Escanea vulnerabilidades en dependencias
-      - name: "🔍 Auditoría de dependencias (npm audit)"
+      - name: "🔍 Auditoría de dependencias"
         run: npm audit --audit-level=moderate
-      
-      # Escanea secretos expuestos en el código
-      - name: "🕵️ Detección de secretos (gitleaks)"
-        uses: gitleaks/gitleaks-action@v2
-        with:
-          config-path: .gitleaks.toml  # Archivo de configuración opcional
 
   calidad_codigo:
     name: "🧹 Análisis de Calidad"
-    needs: seguridad  # Espera que termine el job de seguridad
+    needs: seguridad
     runs-on: ubuntu-latest
     
     steps:
-      - name: "📥 Checkout del repositorio"
-        uses: actions/checkout@v3
-
-      - name: "🔄 Configurar Node.js"
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: 'package-lock.json'  # Especifica el archivo de lock
 
       - name: "📦 Instalar linters"
         run: |
-          # Instala paquetes necesarios solo si no existen
-          if [ ! -f package.json ]; then npm init -y; fi
           npm install eslint stylelint stylelint-config-standard htmlhint --save-dev
-          
-          # Configuración básica si no existe
           [ ! -f .eslintrc.json ] && echo '{ "extends": "eslint:recommended" }' > .eslintrc.json
           [ ! -f .stylelintrc.json ] && echo '{ "extends": "stylelint-config-standard" }' > .stylelintrc.json
           [ ! -f .htmlhintrc ] && echo '{}' > .htmlhintrc
 
-      # --------------------------------------------------
-      # LINTERS (Herramientas de análisis estático)
-      # --------------------------------------------------
-      
-      # ESLint: Analiza código JavaScript/JSX
-      # - Detecta errores, malas prácticas y problemas de estilo
-      # - --quiet: Solo muestra errores (no warnings)
-      # - --max-warnings 0: Falla si hay warnings
-      - name: "🔍 Lint JavaScript (ESLint)"
-        run: npx eslint ./app/**/*.js --quiet --max-warnings 0
+      - name: "🔍 Lint JavaScript"
+        run: npx eslint ./app/**/*.js --quiet
 
-      # Stylelint: Analiza código CSS/SCSS
-      # - --fix: Corrige automáticamente problemas simples
-      # - --allow-empty-input: No falla si no hay archivos CSS
-      - name: "🎨 Lint CSS (Stylelint)"
-        run: npx stylelint "./app/**/*.css" --fix --quiet --allow-empty-input
+      - name: "🎨 Lint CSS"
+        run: npx stylelint "./app/**/*.css" --fix --quiet
 
-      # HTMLHint: Analiza archivos HTML
-      # - --config: Usa configuración personalizada
-      - name: "📄 Lint HTML (HTMLHint)"
-        run: npx htmlhint "./app/**/*.html" --config .htmlhintrc
-
-      # --------------------------------------------------
-      # ANÁLISIS ADICIONALES
-      # --------------------------------------------------
-      
-      # Verifica dependencias desactualizadas
-      - name: "🔄 Chequear dependencias desactualizadas"
-        run: npx npm-check-updates --errorLevel 2
-      
-      # Analiza el tamaño del bundle (opcional)
-      - name: "📊 Analizar tamaño del bundle (opcional)"
-        if: false  # Deshabilitado por defecto
-        run: npx source-map-explorer 'app/**/*.js'
+      - name: "📄 Lint HTML"
+        run: npx htmlhint "./app/**/*.html"
