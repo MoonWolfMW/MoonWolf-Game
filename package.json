@@ -6,7 +6,8 @@
   "scripts": {
     "build": "echo \"No build step defined yet\"",
     "prepare": "chmod +x .githooks/* && git config core.hooksPath .githooks || true",
-    "install-hooks": "npm install -g eslint stylelint stylelint-config-standard htmlhint gitleaks",
+    "install-hooks": "npm install -g eslint stylelint stylelint-config-standard htmlhint && npm run install-gitleaks",
+    "install-gitleaks": "curl -L https://github.com/gitleaks/gitleaks/releases/download/v8.18.1/gitleaks_8.18.1_linux_x64.tar.gz | tar xz -C /usr/local/bin/ gitleaks",
     "lint:js": "eslint ./app/**/*.js",
     "lint:css": "stylelint ./app/**/*.css",
     "lint:html": "htmlhint ./app/**/*.html",
@@ -24,7 +25,6 @@
     "eslint": "^8.56.0",
     "stylelint": "^16.2.1",
     "stylelint-config-standard": "^36.0.0",
-    "htmlhint": "^1.1.4",
-    "gitleaks": "^8.18.1"
+    "htmlhint": "^1.1.4"
   }
 }
