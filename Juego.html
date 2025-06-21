@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mi Mascota - My Pet</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="juego-body">
+
+ <div class="juego-container">
+  <!-- contenido -->
+    <div class="estado">
+      <div class="barra"><label>Hambre</label><progress id="hambre" value="100" max="100"></progress></div>
+      <div class="barra"><label>Sed</label><progress id="sed" value="100" max="100"></progress></div>
+      <div class="barra"><label>Suciedad</label><progress id="suciedad" value="100" max="100"></progress></div>
+      <div class="barra"><label>Social</label><progress id="social" value="100" max="100"></progress></div>
+    </div>
+
+    <div class="mascota-area">
+      <!-- The src will be set dynamically by JavaScript; using a placeholder image for now -->
+      <img id="mascota" src="assets/placeholder.png" alt="Mascota" />
+    </div>
+
+<!-- ...existing code... -->
+<div class="mochila-icono" id="mochilaIcono" title="Abrir mochila">
+  🎒
+</div>
+
+<div class="mochila-panel" id="mochilaPanel">
+  <h3>Mochila</h3>
+  <div class="items-mochila">
+    <div class="item" onclick="usarItem('comida')">
+      <img src="assets/comida.png" alt="Comida" />
+      <span>Comida</span>
+    </div>
+    <div class="item" onclick="usarItem('agua')">
+      <img src="assets/agua.png" alt="Agua" />
+      <span>Agua</span>
+    </div>
+    <div class="item" onclick="usarItem('baño')">
+      <img src="assets/jabon.png" alt="Jabón" />
+      <span>Jabón</span>
+    </div>
+    <div class="item" onclick="usarItem('juguete')">
+      <img src="assets/juguete.png" alt="Juguete" />
+      <span>Juguete</span>
+    </div>
+  </div>
+</div>
+<!-- ...existing code... -->
+
+</div>  <!-- CIERRE FALTANTE -->
+
+<script src="app.js"></script>
+</body>
+</html>
