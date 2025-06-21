@@ -1,4 +1,4 @@
-name: CI/CD Seguro
+name: CI - Integración Continua
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [main, kathy]
 
 permissions:
-  contents: write
-  security-events: write  # Necesario para CodeQL
+  contents: read
+  security-events: write
 
 jobs:
   seguridad:
@@ -19,77 +19,47 @@ jobs:
       - name: "🛡️ Checkout del código"
         uses: actions/checkout@v3
 
-      # Análisis estático de código con CodeQL (detecta vulnerabilidades)
-      - name: "🔍 CodeQL Analysis"
-        uses: github/codeql-action/analyze@v2
+      - name: "🔍 Inicializar CodeQL"
+        uses: github/codeql-action/init@v2
         with:
-          languages: javascript
-        
-      # Detección de secretos en el código
-      - name: "🔑 Detección de secretos (Gitleaks)"
+          languages: 'javascript'
+          queries: security-extended
+
+      - name: "🔎 Ejecutar Análisis CodeQL"
+        uses: github/codeql-action/analyze@v2
+
+      - name: "🔑 Detección de secretos"
         uses: gitleaks/gitleaks-action@v2
         with:
-          config-path: .gitleaks.toml  # Configuración opcional
+          config-path: .gitleaks.toml
+          fail-on-error: true
 
-      # Auditoría de dependencias (si usas npm)
-      - name: "📦 Auditoría de dependencias"
-        if: false  # Desactivado por defecto (solo si necesitas npm)
-        run: |
-          npm init -y --scope=temp-project
-          npm audit --audit-level=critical
-
-  lint:
-    name: "🧹 Análisis de Calidad"
+  calidad:
+    name: "🧹 Control de Calidad"
     runs-on: ubuntu-latest
-    needs: seguridad  # Espera que termine el job de seguridad
-
+    
     steps:
       - name: "📥 Checkout del repositorio"
         uses: actions/checkout@v3
 
-      - name: "🔄 Configurar Node.js"
+      - name: "🔄 Configurar Node.js (solo para linters)"
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
+          cache: 'none'
 
-      - name: "📦 Instalar linters"
+      - name: "📦 Instalar linters globalmente"
         run: |
-          npm install eslint stylelint stylelint-config-standard htmlhint --save-dev
+          npm install -g eslint stylelint stylelint-config-standard htmlhint
           [ ! -f .eslintrc.json ] && echo '{ "extends": "eslint:recommended" }' > .eslintrc.json
           [ ! -f .stylelintrc.json ] && echo '{ "extends": "stylelint-config-standard" }' > .stylelintrc.json
           [ ! -f .htmlhintrc ] && echo '{}' > .htmlhintrc
 
       - name: "🔍 Lint JavaScript"
-        run: npx eslint ./app/**/*.js --quiet --max-warnings=0
+        run: eslint ./app/**/*.js --quiet --max-warnings=0
 
       - name: "🎨 Lint CSS"
-        run: npx stylelint "./app/**/*.css" --fix --quiet
+        run: stylelint "./app/**/*.css" --fix --quiet
 
       - name: "📄 Lint HTML"
-        run: npx htmlhint "./app/**/*.html" --quiet
-
-  deploy:
-    name: "🚀 Despliegue"
-    needs: lint
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    
-    steps:
-      - name: "📥 Checkout del código"
-        uses: actions/checkout@v3
-
-      - name: "⚙️ Configurar Git"
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-      - name: "🚀 Desplegar en GitHub Pages"
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./app
-          force_orphan: true
-          enable_jekyll: false
+        run: htmlhint "./app/**/*.html" --quiet

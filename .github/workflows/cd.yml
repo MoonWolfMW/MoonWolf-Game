@@ -1,36 +1,32 @@
-name: CD
+name: CD - Despliegue Continuo
 
 on:
   push:
-    branches: [main, kathy]
+    branches: [main]  # Solo se ejecuta en main para producción
 
 jobs:
   deploy:
+    name: "🚀 Desplegar a GitHub Pages"
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pages: write
       id-token: write
-
+    
     steps:
-      - name: "🚚 Checkout code"
+      - name: "📥 Checkout del código"
         uses: actions/checkout@v3
 
-      # Configuración mínima de Git (necesaria para el deploy)
       - name: "⚙️ Configurar Git"
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      # Paso de despliegue sin dependencias de Node.js
-      - name: "🚀 Desplegar en GitHub Pages"
+      - name: "🚀 Desplegar"
         uses: peaceiris/actions-gh-pages@v3
         with:
-          # Usa el token automático de GitHub
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Especifica tu directorio de publicación
           publish_dir: ./app
-          # Fuerza el despliegue incluso si no hay cambios
           force_orphan: true
-          # No requiere configuración de Node.js
           enable_jekyll: false
+          keep_files: false
